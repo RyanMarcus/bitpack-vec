@@ -1,5 +1,7 @@
 # dense-bitpack
 
+[![Rust](https://github.com/RyanMarcus/dense-bitpack/actions/workflows/rust.yml/badge.svg)](https://github.com/RyanMarcus/dense-bitpack/actions/workflows/rust.yml)
+
 A dense bitpacked vector type for unnsigned integers.
 
 * `O(1)` random access to single elements
