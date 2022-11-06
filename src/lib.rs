@@ -37,6 +37,25 @@ impl BitpackVec {
         self.data
     }
 
+    pub fn from_slice(x: &[u64]) -> BitpackVec {
+        assert!(
+            !x.is_empty(),
+            "Cannot make bitpacked vector from empty slice"
+        );
+
+        // scan the data to figure out the fewest bits needed
+        let max = x.iter().max().unwrap();
+        let bits = 64 - max.leading_zeros();
+
+        let mut bv = BitpackVec::new(bits as usize);
+
+        for i in x {
+            bv.push(*i);
+        }
+
+        return bv;
+    }
+
     pub fn len(&self) -> usize {
         self.len
     }
@@ -49,9 +68,13 @@ impl BitpackVec {
         (self.data.len() * 64) / self.width()
     }
 
+    pub fn fits(&self, x: u64) -> bool {
+        x < 2_u64.pow(self.width as u32)
+    }
+
     pub fn push(&mut self, x: u64) {
         assert!(
-            x < 2_u64.pow(self.width as u32),
+            self.fits(x),
             "value {} too large to bitpack to width {}",
             x,
             self.width
@@ -251,7 +274,13 @@ impl Debug for BitpackVec {
     }
 }
 
-fn main() {}
+impl Extend<u64> for BitpackVec {
+    fn extend<T: IntoIterator<Item = u64>>(&mut self, iter: T) {
+        for i in iter {
+            self.push(i);
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -441,5 +470,14 @@ mod tests {
         v.push(8);
         v2.push(8);
         assert_eq!(v, v2);
+    }
+
+    #[test]
+    pub fn test_from_slice() {
+        let v = vec![4, 19, 184, 18314, 62];
+        let bv = BitpackVec::from_slice(&v);
+
+        assert_eq!(bv.width(), 15);
+        assert_eq!(bv.to_vec(), v);
     }
 }
