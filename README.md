@@ -6,10 +6,12 @@ A dense bitpacked vector type for unnsigned integers.
 
 * `O(1)` random access to single elements
 * `O(1)` pop
+* `O(1)` set
+* Amortized `O(1)` push (same as Rust `Vec`)
 * Any bitlength from 1 to 63
 * Serde serializable
 
-This packages does an "as you'd expect" bitpacking of integers, with no fancy SIMD or additional compression. Values are stored in a `Vec<u64>`, so no more than 63 bits should be wasted. Values can overlap `u64` values.
+This package does an "as you'd expect" bitpacking of integers, with no fancy SIMD or additional compression. Values are stored in a `Vec<u64>`, so no more than 63 bits should be wasted. Values can overlap `u64` values.
 
 Compared to other bitpacking packages for Rust:
 
