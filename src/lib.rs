@@ -114,6 +114,13 @@ impl BitpackVec {
             idx,
             self.len
         );
+        assert!(
+            self.fits(x),
+            "value {} too large to bitpack to width {}",
+            x,
+            self.width
+        );
+
         let start_bit = idx * self.width;
         let stop_bit = start_bit + self.width - 1;
 
@@ -559,5 +566,20 @@ mod tests {
 
         assert_eq!(bv.width(), 15);
         assert_eq!(bv.to_vec(), v);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_does_not_fit_push() {
+        let mut bv = BitpackVec::new(5);
+        bv.push(32);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_does_not_fit_set() {
+        let mut bv = BitpackVec::new(5);
+        bv.push(18);
+        bv.set(0, 32);
     }
 }
