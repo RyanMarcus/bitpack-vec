@@ -53,7 +53,7 @@ impl BitpackVec {
             bv.push(*i);
         }
 
-        return bv;
+        bv
     }
 
     pub fn len(&self) -> usize {
