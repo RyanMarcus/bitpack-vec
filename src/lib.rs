@@ -107,6 +107,60 @@ impl BitpackVec {
         self.len += 1;
     }
 
+    pub fn set(&mut self, idx: usize, x: u64) {
+        assert!(
+            idx < self.len,
+            "index {} out of bounds for len {}",
+            idx,
+            self.len
+        );
+        let start_bit = idx * self.width;
+        let stop_bit = start_bit + self.width - 1;
+
+        let start_u64 = start_bit / 64;
+        let stop_u64 = stop_bit / 64;
+
+        if start_u64 == stop_u64 {
+            // all in the same u64
+            let local_start_bit = start_bit % 64;
+            let local_stop_bit = local_start_bit + self.width;
+            let v = self.data[start_u64];
+
+            // zero out all the data at index `idx`
+            let mut mask = ((!0_u64) >> local_start_bit) << local_start_bit;
+            mask = (mask << (64 - local_stop_bit)) >> (64 - local_stop_bit);
+            mask = !mask;
+
+            let v = v & mask;
+
+            // now or the value into it
+            let x = x << local_start_bit;
+            let v = v | x;
+
+            self.data[start_u64] = v;
+        } else {
+            // bits are split between two cells
+            let local_start_bit = start_bit % 64;
+
+            // clear the bits currently in the cell
+            let bit_count_in_first = 64 - local_start_bit;
+            let v = self.data[start_u64];
+            let v = (v << bit_count_in_first) >> bit_count_in_first;
+            let prefix_bits = x << (64 - bit_count_in_first);
+            let v = v | prefix_bits;
+            self.data[start_u64] = v;
+
+            // clear the bits at the front of the next cell
+            let remaining_bit_count = self.width - bit_count_in_first;
+            let v = self.data[stop_u64];
+            let v = (v >> remaining_bit_count) << remaining_bit_count;
+            let x = x >> bit_count_in_first;
+            let v = v | x;
+
+            self.data[stop_u64] = v;
+        }
+    }
+
     pub fn at(&self, idx: usize) -> u64 {
         assert!(
             idx < self.len,
@@ -355,6 +409,32 @@ mod tests {
             }
 
             assert_eq!(v.len(), 2_u64.pow(bits as u32) as usize);
+        }
+    }
+
+    #[test]
+    pub fn test_set() {
+        let mut v = BitpackVec::new(5);
+
+        for i in 0..16 {
+            v.push(i);
+        }
+
+        assert_eq!(v.at(5), 5);
+        v.set(5, 20);
+        assert_eq!(v.at(5), 20);
+        v.set(5, 5);
+        assert_eq!(v.at(5), 5);
+
+        v.set(12, 20);
+        assert_eq!(v.at(12), 20);
+
+        for i in 0..16 {
+            v.set(i as usize, i + 5);
+        }
+
+        for i in 0..16 {
+            assert_eq!(v.at(i as usize), i + 5);
         }
     }
 
