@@ -1,8 +1,32 @@
-# dense-bitpack
+# bitpack-vec
 
-[![Rust](https://github.com/RyanMarcus/dense-bitpack/actions/workflows/rust.yml/badge.svg)](https://github.com/RyanMarcus/dense-bitpack/actions/workflows/rust.yml)
+[![Rust](https://github.com/RyanMarcus/bitpack-vec/actions/workflows/rust.yml/badge.svg)](https://github.com/RyanMarcus/bitpack-vec/actions/workflows/rust.yml)
 
 A dense bitpacked vector type for unnsigned integers.
+
+```rust
+use bitpack_vec::BitpackVec;
+let mut bv = BitpackVec::new(5);  // 5-bit integers
+
+for i in 0..12 {
+    bv.push(i);
+}
+
+assert_eq!(bv.at(6), 6);
+assert_eq!(bv.at(9), 9);
+
+use deepsize::DeepSizeOf;
+assert_eq!(bv.as_raw().len(), 1);  // underlying vector length is just 1 (60 bits)
+
+// total in-memory size (not strictly specified by Rust):
+assert_eq!(
+    bv.deep_size_of(), 
+    std::mem::size_of::<Vec<u64>>()  // size of the vector structure
+    + std::mem::size_of::<usize>() // the length counter (separate from the Vec's)
+    + std::mem::size_of::<u8>() // the bitwidth of the structure
+    + 15 // padding
+);
+```
 
 * `O(1)` random access to single elements
 * `O(1)` pop
