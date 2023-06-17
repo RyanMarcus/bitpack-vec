@@ -1,8 +1,12 @@
 [package]
 name = "bitpack-vec"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 license = "GPL-3.0-or-later"
+description = "A vector for arbitrary bitwidth integers, densely packed."
+homepage = "https://github.com/RyanMarcus/bitpack-vec"
+repository = "https://github.com/RyanMarcus/bitpack-vec"
+keywords = ["bitpack"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
