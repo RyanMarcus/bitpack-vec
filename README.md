@@ -1,6 +1,6 @@
 # bitpack-vec
 
-[![Rust](https://github.com/RyanMarcus/bitpack-vec/actions/workflows/rust.yml/badge.svg)](https://github.com/RyanMarcus/bitpack-vec/actions/workflows/rust.yml)
+[![Rust](https://github.com/RyanMarcus/bitpack-vec/actions/workflows/rust.yml/badge.svg)](https://github.com/RyanMarcus/bitpack-vec/actions/workflows/rust.yml) [![docs.rs](https://img.shields.io/docsrs/bitpack-vec/latest)](https://docs.rs/bitpack-vec/)
 
 A dense bitpacked vector type for unnsigned integers.
 
