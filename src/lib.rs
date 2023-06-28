@@ -464,6 +464,30 @@ impl BitpackVec {
         r
     }
 
+    /// Changes the width of the vector via copying (`O(n)`). Panics if any
+    /// element in the current vector will not fit in `new_width` bits.
+    ///
+    /// ```rust
+    /// use bitpack_vec::BitpackVec;
+    /// let mut bv = BitpackVec::new(5);
+    ///
+    ///
+    /// assert!(!bv.fits(34)); // doesn't fit
+    /// bv.change_width(6);
+    /// assert!(bv.fits(34)); // fits now
+    /// ```
+    pub fn change_width(&mut self, new_width: usize) {
+        if new_width == self.width() {
+            return;
+        }
+
+        let mut nv = BitpackVec::new(new_width);
+        for item in self.iter() {
+            nv.push(item);
+        }
+        *self = nv;
+    }
+
     /// Allows iteration over the values in the bit vector.
     /// ```rust
     /// use bitpack_vec::BitpackVec;
@@ -768,6 +792,21 @@ mod tests {
         let bv = BitpackVec::from_slice(&v);
 
         assert_eq!(bv.width(), 15);
+        assert_eq!(bv.to_vec(), v);
+    }
+
+    #[test]
+    pub fn test_change_width() {
+        let mut v = vec![1, 2, 3, 4];
+        let mut bv = BitpackVec::from_slice(&v);
+
+        v.push(66);
+
+        assert!(!bv.fits(66));
+        bv.change_width(7);
+        assert!(bv.fits(66));
+        bv.push(66);
+
         assert_eq!(bv.to_vec(), v);
     }
 
