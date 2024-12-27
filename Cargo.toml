@@ -1,6 +1,6 @@
 [package]
 name = "bitpack-vec"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 license = "GPL-3.0-or-later"
 description = "A vector for arbitrary bitwidth integers, densely packed."
@@ -11,6 +11,6 @@ keywords = ["bitpack"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-divrem = "1.0.0"
-deepsize = "0.2.0"
+divrem = "1.0"
+deepsize = "0.2"
 serde = { version = "1.0", features = ["derive"] }

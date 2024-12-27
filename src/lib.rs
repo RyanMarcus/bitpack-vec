@@ -453,7 +453,7 @@ impl BitpackVec {
     /// let v = bv.to_vec();
     ///
     /// assert_eq!(v, vec![5, 6, 7, 8]);
-    /// ```    
+    /// ```
     pub fn to_vec(&self) -> Vec<u64> {
         let mut r = Vec::with_capacity(self.len());
 
@@ -500,7 +500,7 @@ impl BitpackVec {
     ///
     /// let v: Vec<u64> = bv.iter().filter(|x| x % 2 == 0).collect();
     /// assert_eq!(v, vec![6, 8]);
-    /// ```    
+    /// ```
     pub fn iter(&self) -> BitpackIter {
         BitpackIter { bv: self, curr: 0 }
     }
@@ -512,7 +512,7 @@ pub struct BitpackIter<'a> {
     curr: usize,
 }
 
-impl<'a> Iterator for BitpackIter<'a> {
+impl Iterator for BitpackIter<'_> {
     type Item = u64;
 
     fn next(&mut self) -> Option<Self::Item> {
